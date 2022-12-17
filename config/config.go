@@ -7,11 +7,18 @@ import (
 )
 
 var (
-	config *configStruct
+	Server   string
+	Database string
+	Username string
+	Password string
+	config   *configStruct
 )
 
 type configStruct struct {
-	ConnectionString string `json:"connectionString"`
+	Server   string `json:"server"`
+	Database string `json:"database"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func ReadConfig() error {
@@ -25,5 +32,9 @@ func ReadConfig() error {
 		log.Fatal(err)
 		return err
 	}
+	Server = config.Server
+	Database = config.Database
+	Username = config.Username
+	Password = config.Password
 	return nil
 }
