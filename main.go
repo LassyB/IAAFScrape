@@ -24,12 +24,20 @@ func main() {
 	data := database.Database{
 		SqlDb: sqlObj,
 	}
-	list, err := data.GetActiveAthletes()
+	athleteList, err := data.GetActiveAthletes()
 	if err != nil {
 		log.Println(err)
 	}
-	for e := list.Front(); e != nil; e = e.Next() {
+	for e := athleteList.Front(); e != nil; e = e.Next() {
 		athlete := database.Athlete(e.Value.(database.Athlete))
 		fmt.Println(athlete.Name)
+		resultsList, err := data.GetAthleteResults(athlete)
+		if err != nil {
+			log.Println(err)
+		}
+		for r := resultsList.Front(); r != nil; r = r.Next() {
+			result := database.Result(r.Value.(database.Result))
+			fmt.Println(result.Mark)
+		}
 	}
 }
