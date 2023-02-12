@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/LassyB/IAAFScrape/config"
 	"github.com/LassyB/IAAFScrape/database"
+	"github.com/LassyB/IAAFScrape/iaaf"
 	_ "github.com/denisenkom/go-mssqldb"
 )
 
@@ -30,14 +32,24 @@ func main() {
 	}
 	for e := athleteList.Front(); e != nil; e = e.Next() {
 		athlete := database.Athlete(e.Value.(database.Athlete))
-		fmt.Println(athlete.Name)
 		resultsList, err := data.GetAthleteResults(athlete)
 		if err != nil {
 			log.Println(err)
 		}
-		for r := resultsList.Front(); r != nil; r = r.Next() {
-			result := database.Result(r.Value.(database.Result))
-			fmt.Println(result.Mark)
+		// If the athlete has results, just do the past year
+		// Otherwise, do the past ten years
+		year := time.Now().Year()
+		yearsBack := 1
+		if resultsList.Len() == 0 {
+			yearsBack = 9
 		}
+		for i := 0; i <= yearsBack; i++ {
+			fmt.Printf("%s - %d", athlete.Name, (year - yearsBack))
+			yearResults, err := iaaf.GetAthleteResults(athlete.IAAF, year-yearsBack)
+		}
+		// for r := resultsList.Front(); r != nil; r = r.Next() {
+		// 	result := database.Result(r.Value.(database.Result))
+		// 	fmt.Println(result.Mark)
+		// }
 	}
 }
